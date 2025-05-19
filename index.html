@@ -502,13 +502,11 @@ border: 1px solid rgba(117, 139, 225, 0.17);
     </div>
   </div>
 
- <script type="module">
-  // Import Firebase SDKs
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-  import { getDatabase, ref, child, get, onValue, update, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+  import { getDatabase, ref, onValue, get, update, query, orderByChild, equalTo, off } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyAu-u95pdOLkbTp7J5-z16caVCoSX0yIpA",
     authDomain: "authentication-88f1c.firebaseapp.com",
@@ -519,13 +517,13 @@ border: 1px solid rgba(117, 139, 225, 0.17);
     appId: "1:698326349644:web:9531b53b74bff2ff18c4ea"
   };
 
-  // Init Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
 
   let currentUser = null;
   let currentTab = 'pending';
+  let currentListenerRef = null;
 
   window.resellerLogin = async function () {
     const email = document.getElementById('login-email').value.trim();
@@ -539,15 +537,18 @@ border: 1px solid rgba(117, 139, 225, 0.17);
       currentUser = userCredential.user;
       const userSnap = await get(ref(db, 'users/' + currentUser.uid));
       const userData = userSnap.val();
+
       if (!userData || userData.type !== 'Reseller') {
         alert('Access denied: Only resellers can log in here.');
         await signOut(auth);
         return;
       }
+
       document.getElementById('login-system').classList.add('hidden');
       document.getElementById('main-container').classList.remove('hidden');
       document.getElementById('total-earnings-card').classList.remove('hidden');
       document.getElementById('panel-box').classList.remove('hidden');
+
       loadTabData('pending');
       updateTotalEarnings();
       loadApprovedTransactionCards();
@@ -555,7 +556,7 @@ border: 1px solid rgba(117, 139, 225, 0.17);
       console.error('Login failed:', error.message);
       alert('Login failed: ' + error.message);
     }
-  }
+  };
 
   window.logout = async function () {
     await signOut(auth);
@@ -565,7 +566,9 @@ border: 1px solid rgba(117, 139, 225, 0.17);
     document.getElementById('total-earnings-card').classList.add('hidden');
     document.getElementById('panel-box').classList.add('hidden');
     clearTable();
-  }
+    clearTransactionHistory();
+    if (currentListenerRef) off(currentListenerRef);
+  };
 
   onAuthStateChanged(auth, user => {
     currentUser = user || null;
@@ -577,19 +580,24 @@ border: 1px solid rgba(117, 139, 225, 0.17);
     document.getElementById('tab-pending').classList.toggle('active-tab', tab === 'pending');
     document.getElementById('tab-approved').classList.toggle('active-tab', tab === 'approved');
     loadTabData(tab);
-  }
+  };
 
   function clearTable() {
     document.getElementById('table-body').innerHTML = '';
     document.querySelector('#account-table thead').innerHTML = '';
   }
 
+  function clearTransactionHistory() {
+    document.getElementById('transaction-history').innerHTML = '';
+  }
+
   function loadTabData(tab) {
     const tableBody = document.getElementById('table-body');
     const tableHead = document.querySelector('#account-table thead');
     const tabTitle = document.getElementById('tab-title');
-    tableBody.innerHTML = '';
-    tableHead.innerHTML = '';
+
+    clearTable();
+    if (currentListenerRef) off(currentListenerRef);
 
     if (tab === 'pending') {
       tabTitle.textContent = 'Pending Accounts';
@@ -601,6 +609,7 @@ border: 1px solid rgba(117, 139, 225, 0.17);
           <th>Action</th>
         </tr>`;
       const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('pending'));
+      currentListenerRef = usersRef;
       onValue(usersRef, snapshot => {
         tableBody.innerHTML = '';
         if (!snapshot.exists()) {
@@ -619,8 +628,7 @@ border: 1px solid rgba(117, 139, 225, 0.17);
             </tr>`;
         });
       });
-
-    } else if (tab === 'approved') {
+    } else {
       tabTitle.textContent = 'Approved Accounts';
       tableHead.innerHTML = `
         <tr>
@@ -630,6 +638,7 @@ border: 1px solid rgba(117, 139, 225, 0.17);
           <th>Payment Collected (₱)</th>
         </tr>`;
       const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
+      currentListenerRef = usersRef;
       onValue(usersRef, snapshot => {
         tableBody.innerHTML = '';
         if (!snapshot.exists()) {
@@ -663,7 +672,8 @@ border: 1px solid rgba(117, 139, 225, 0.17);
     const updates = {
       status: 'approved',
       paymentCollected: paymentValue,
-      approvedBy: currentUser.email
+      approvedBy: currentUser.email,
+      date_registration: new Date().toISOString()
     };
 
     await update(ref(db, 'users/' + uid), updates);
@@ -671,25 +681,26 @@ border: 1px solid rgba(117, 139, 225, 0.17);
     loadTabData(currentTab);
     updateTotalEarnings();
     loadApprovedTransactionCards();
-  }
+  };
 
-function updateTotalEarnings() {
+  function updateTotalEarnings() {
   const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
   onValue(usersRef, snapshot => {
     let gross = 0;
     let net = 0;
     if (snapshot.exists()) {
       snapshot.forEach(child => {
-        const payment = child.val().paymentCollected || 0;
-        gross += payment;
-        net += Math.max(0, payment - 50); // Net = payment - ₱50 commission
+        const data = child.val();
+        if (data.approvedBy === currentUser.email) {
+          const payment = data.paymentCollected || 0;
+          gross += payment;
+          net += Math.max(0, payment - 50); // Net = payment - ₱50 commission
+        }
       });
     }
 
-    // Update HTML display
     document.getElementById('total-earnings-value').textContent = net.toFixed(2);
 
-    // Optional: Display breakdown if you have these elements
     const grossEl = document.getElementById('total-gross');
     const netEl = document.getElementById('total-net');
     const lessEl = document.getElementById('total-less');
@@ -701,7 +712,6 @@ function updateTotalEarnings() {
     }
   });
 }
-
 
   function renderTransactionCards(accounts) {
     const container = document.getElementById('transaction-history');
@@ -718,6 +728,7 @@ function updateTotalEarnings() {
       const dateText = account.date_registration
         ? new Date(account.date_registration).toLocaleString()
         : 'N/A';
+
       card.innerHTML = `
         <div class="card-header">
           <div class="left-info">
@@ -731,7 +742,7 @@ function updateTotalEarnings() {
           <p><strong>Email:</strong> ${account.email || 'N/A'}</p>
           <p><strong>Date Registered:</strong> ${dateText}</p>
           <p><strong>Payment Collected:</strong> ₱${(account.paymentCollected || 0).toFixed(2)}</p>
-          <p><strong>Approved By:</strong> ${account.username || 'N/A'}</p>
+          <p><strong>Approved By:</strong> ${account.approvedBy || 'N/A'}</p>
         </div>`;
       card.addEventListener('click', () => {
         card.classList.toggle('expanded');
@@ -740,21 +751,27 @@ function updateTotalEarnings() {
     });
   }
 
-  function loadApprovedTransactionCards() {
-    const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
-    onValue(usersRef, snapshot => {
-      if (!snapshot.exists()) {
-        renderTransactionCards([]);
-        return;
+ function loadApprovedTransactionCards() {
+  const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
+  onValue(usersRef, snapshot => {
+    if (!snapshot.exists()) {
+      renderTransactionCards([]);
+      return;
+    }
+
+    const approvedAccounts = [];
+    snapshot.forEach(child => {
+      const data = child.val();
+      if (data.approvedBy === currentUser.email) {
+        approvedAccounts.push(data);
       }
-      const approvedAccounts = [];
-      snapshot.forEach(child => {
-        approvedAccounts.push(child.val());
-      });
-      renderTransactionCards(approvedAccounts);
     });
-  }
+
+    renderTransactionCards(approvedAccounts);
+  });
+}
 </script>
+
 <script>
   function openCommissionModal() {
     document.getElementById("commissionModal").style.display = "block";
