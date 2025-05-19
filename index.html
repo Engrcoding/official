@@ -103,53 +103,48 @@ body::before {
 
     .hidden { display: none; }
 
-.logo-container {
-  display: flex;
-  justify-content: space-between; /* logo-left left, logout right */
-  align-items: center;
-  padding: 0;
-  margin-bottom: 20px;
+  .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0px;
+    margin-bottom: 20px;
 }
 
-.logo-left {
-  display: flex;             /* side by side */
-  align-items: center;       /* vertical center */
-  gap: 10px;                 /* space between image and text */
+.logo-container img {
+  height: 40px; /* or whatever size you want */
 }
 
-.logo-left img {
-  height: 40px;
-}
-
-.logo-text-container {
+.logo-container div {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-.logo-text {
-  font-size: 25px;
-  font-weight: bold;
-  color: #fff;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.logo-subtext {
-  font-size: 14px;
-  color: #fff;
-  margin: 0;
 }
 
 .logout-btn {
   cursor: pointer;
   padding: 6px 10px;
   font-size: 14px;
-  border-radius: 5px;
-  border: none;
+  border-radius:5px;
+  border:none;
   background: #a2bfff;
-  color: #fff;
+    color: #fff;
 }
+
+
+    .logo-text {
+      font-size: 25px;
+      font-weight: bold;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .logo-subtext {
+      font-size: 14px;
+      color: #fff;
+    }
+
     .table-wrapper {
       overflow-x: auto;
     }
@@ -446,18 +441,14 @@ border: 1px solid rgba(117, 139, 225, 0.17);
   </div>
 
   <div class="container hidden" id="main-container">
- <div class="logo-container">
-  <div class="logo-left">
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQNVqagT4cldmqJQhfY2zanGWSNaJtIfyEltukMIirwdaoQ4vc6T-C-FnLW7M2Xe7QHR0X4uxaKwmOHyLlOK8bLcYA8icGln9dy5lmH8pxR7OZhBs9wpYi2EZwKk0_V4yHA7M9pXtTwkBAuPun2nkL9lkBBrmppkeg1-q8E3bu7V0ZWYCz1zJicR2CetU/s1600/admin.jpg" />
-    <div class="logo-text-container">
-      <div class="logo-text">ABEFILM</div>
-      <div class="logo-subtext">Movies & Series</div>
-    </div>
+   <div class="logo-container">
+  <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1f0YnJUX5Sln3JWkJU_KIRRg2b1RLAYFfcesdbY9FnP04tZndXO2wd5AozdK27w4ZfYwM_dAPcHmshKGwf1Y3ezWzhwEEcZyW46BI57M0_iavbEgS9l5F0swBzOKAzdp5V5FCdzWwd6QlECK5jJ6M2p1PS4D3sG3KtTOhUTbqSXli3IYWr4grhyphenhyphenawjBU/s1600/mew.png" />
+  <div>
+    <div class="logo-text">ABEFILM</div>
+    <div class="logo-subtext">Movies & Series</div>
   </div>
   
-  <button class="logout-btn" onclick="logout()">
-    <i class="bi bi-box-arrow-right"></i> Logout
-  </button>
+  <button class="logout-btn" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
 </div>
 
 
