@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reseller Admin Panel</title>
+
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <style>
+  body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+
+  /* Background image */
+  background-image: url('https://img.freepik.com/free-vector/blue-fluid-background-frame_53876-99019.jpg?semt=ais_hybrid&w=740');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 100vh;
+  color: #fff;
+}
+
+body::before {
+  content: "";
+  position: fixed; /* Cover entire viewport */
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Black with 30% opacity */
+  z-index: -1; /* Behind content */
+}
+
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+  .login-system {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('https://img.freepik.com/free-vector/blue-fluid-background-frame_53876-99019.jpg?semt=ais_hybrid&w=740')
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.login-system::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
+  opacity: 0.3; /* Adjust transparency */
+  z-index: 0;
+}
+
+.login-system > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+    h2 { margin: 0 }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      width: 90%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+    }
+
+    .login-box input {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .hidden { display: none; }
+
+.logo-container {
+  display: flex;
+  justify-content: space-between; /* logo-left left, logout right */
+  align-items: center;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.logo-left {
+  display: flex;             /* side by side */
+  align-items: center;       /* vertical center */
+  gap: 10px;                 /* space between image and text */
+}
+
+.logo-left img {
+  height: 40px;
+}
+
+.logo-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logo-text {
+  font-size: 25px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.logo-subtext {
+  font-size: 14px;
+  color: #fff;
+  margin: 0;
+}
+
+.logout-btn {
+  cursor: pointer;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  background: #a2bfff;
+  color: #fff;
+}
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+     /* From https://css.glass */
+background: rgba(117, 139, 225, 0.55);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+border: 1px solid rgba(117, 139, 225, 0.17);
+      border-radius: 8px;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    th {
+      background: #007cff52;
+      color: white;
+    }
+
+    table thead tr:first-child th:first-child {
+      border-top-left-radius: 8px;
+    }
+
+    table thead tr:first-child th:last-child {
+      border-top-right-radius: 8px;
+    }
+
+    table th, table td {
+      white-space: nowrap;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 10;
+    }
+
+    .bottom-nav button {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      flex-grow: 1;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bottom-nav button i {
+      font-size: 16px;
+    }
+
+    .active-tab {
+      font-weight: bold;
+      color: #fff;
+      background-color: #007bff;
+      border-radius: 4px;
+    }
+
+ #total-earnings-card {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: linear-gradient(90deg, #b25eff45 0%, #56ace982 100%);
+  padding: 20px 15px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#total-earnings-card .left-text {
+  white-space: nowrap;
+}
+
+#total-earnings-card button {
+  background: #fff;
+  color: #007bff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  float: none;
+}
+
+
+    .transaction-card {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .transaction-card:hover {
+      background: #f0f0f0;
+    }
+
+    .transaction-card .details {
+      display: none;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .transaction-card.expanded .details {
+      display: block;
+    }
+
+    .approve-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+     #earnings-summary{margin-top:20px}
+
+  .transaction-card {
+    color: #fff;
+    padding: 12px 18px;
+    margin: 12px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .transaction-card:hover {
+    background:#2f4a8530;
+  }
+  .transaction-card .details {
+    display: none;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  .transaction-card.expanded .details {
+    display: block;
+  }
+  .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: normal;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.left-info {
+  display: flex;
+  gap: 6px;
+  font-weight: normal;
+  color:#fff;
+}
+
+.status {
+  font-weight: normal;
+  text-transform: capitalize;
+  font-size: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status i {
+  color: #6cff8d; 
+  font-size: 14px;
+}
+ .commission {
+    padding: 10px 16px;
+    font-size: 14px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color:#000;
+  }
+
+  .modal-content {
+    background-color: white;
+    margin: auto;
+    padding:0;
+    width: 100%;
+    color: #111;
+    font-size: 14px;
+  }
+  
+
+  .modal-img {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+ .modal-details{
+  padding:0 10px;
+ }
+  .modal-details p{
+    margin:0;
+  }
+  .copy-btn {
+    margin-left: 10px;
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .close-btn {
+    margin-top: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 480px) {
+    .modal-content {
+      width: 100%;
+      font-size: 13px;
+      padding: 0;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .copy-btn, .close-btn {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+  }
+  </style>
+</head>
+<body>
+
+  <div class="login-system" id="login-system">
+    <div class="login-box">
+      <h2><i class="bi bi-person-lock"></i> Reseller Login</h2>
+      <input type="email" id="login-email" placeholder="Email" />
+      <input type="password" id="login-password" placeholder="Password" />
+      <button onclick="resellerLogin()"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+    </div>
+  </div>
+
+  <div class="container hidden" id="main-container">
+ <div class="logo-container">
+  <div class="logo-left">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQNVqagT4cldmqJQhfY2zanGWSNaJtIfyEltukMIirwdaoQ4vc6T-C-FnLW7M2Xe7QHR0X4uxaKwmOHyLlOK8bLcYA8icGln9dy5lmH8pxR7OZhBs9wpYi2EZwKk0_V4yHA7M9pXtTwkBAuPun2nkL9lkBBrmppkeg1-q8E3bu7V0ZWYCz1zJicR2CetU/s1600/admin.jpg" />
+    <div class="logo-text-container">
+      <div class="logo-text">ABEFILM</div>
+      <div class="logo-subtext">Movies & Series</div>
+    </div>
+  </div>
+  
+  <button class="logout-btn" onclick="logout()">
+    <i class="bi bi-box-arrow-right"></i> Logout
+  </button>
+</div>
+
+
+    <div id="total-earnings-card" class="hidden">
+  <div class="left-text">Total Earnings: ₱<span id="total-earnings-value"></span></div>
+
+
+<!-- Button to open modal -->
+<button class="commission" onclick="openCommissionModal()">Pay <br> Commission</button>
+
+<!-- Modal -->
+<div id="commissionModal" class="modal">
+  <div class="modal-content">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiUNNnLWo48vDPMAgVwLpE01_1evcyRU81ikjyaifEjWNZJ6r7KXCbUB0fBCsUpfMH7jebM_dboOLNSZlDLEm71AsOsEk3sLMjdxEAiLPAxjEY6wNKuQ8jnKmz2tVLpoGy9deHGUa1LTUId63Zu9YQVNtxEYN5j9p_UrCq_bP2Bm3D8hKL68YF-F4e-ouve/s2048/1000111555.jpg" 
+         class="modal-img">
+  <div class="modal-details">
+    <p><strong>Account Name:</strong> Ariel O. Mentawan</p>
+    <p><strong>Account Number:</strong> 
+      <span id="accountNumber">09074644272</span>
+      <button class="copy-btn" onclick="copyText('accountNumber')">Copy</button>
+    </p>
+
+    <button class="close-btn" onclick="closeCommissionModal()">Close</button>
+  </div>
+  </div>
+</div>
+
+</div>
+
+    <div class="panel-box hidden" id="panel-box">
+      <h2 id="tab-title"><i class="bi bi-hourglass-split"></i> Pending Accounts</h2>
+      <div class="table-wrapper">
+        <table id="account-table">
+          <thead></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div id="earnings-summary">Transaction Summary</div>
+      <div id="transaction-history" style="margin:5px 0 75px 0;"></div>
+    </div>
+
+    <div class="bottom-nav" id="bottom-nav">
+      <button id="tab-pending" class="active-tab" onclick="switchTab('pending')">
+        <i class="bi bi-person-lines-fill"></i>
+        <span>Pending</span>
+      </button>
+      <button id="tab-approved" onclick="switchTab('approved')">
+        <i class="bi bi-person-check"></i>
+        <span>Approved</span>
+      </button>
+    </div>
+  </div>
+
+ <script type="module">
+  // Import Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+  import { getDatabase, ref, child, get, onValue, update, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAu-u95pdOLkbTp7J5-z16caVCoSX0yIpA",
+    authDomain: "authentication-88f1c.firebaseapp.com",
+    databaseURL: "https://authentication-88f1c-default-rtdb.firebaseio.com",
+    projectId: "authentication-88f1c",
+    storageBucket: "authentication-88f1c.appspot.com",
+    messagingSenderId: "698326349644",
+    appId: "1:698326349644:web:9531b53b74bff2ff18c4ea"
+  };
+
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  let currentUser = null;
+  let currentTab = 'pending';
+
+  window.resellerLogin = async function () {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    if (!email || !password) {
+      alert('Please enter email and password');
+      return;
+    }
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      currentUser = userCredential.user;
+      const userSnap = await get(ref(db, 'users/' + currentUser.uid));
+      const userData = userSnap.val();
+      if (!userData || userData.type !== 'Reseller') {
+        alert('Access denied: Only resellers can log in here.');
+        await signOut(auth);
+        return;
+      }
+      document.getElementById('login-system').classList.add('hidden');
+      document.getElementById('main-container').classList.remove('hidden');
+      document.getElementById('total-earnings-card').classList.remove('hidden');
+      document.getElementById('panel-box').classList.remove('hidden');
+      loadTabData('pending');
+      updateTotalEarnings();
+      loadApprovedTransactionCards();
+    } catch (error) {
+      console.error('Login failed:', error.message);
+      alert('Login failed: ' + error.message);
+    }
+  }
+
+  window.logout = async function () {
+    await signOut(auth);
+    currentUser = null;
+    document.getElementById('login-system').classList.remove('hidden');
+    document.getElementById('main-container').classList.add('hidden');
+    document.getElementById('total-earnings-card').classList.add('hidden');
+    document.getElementById('panel-box').classList.add('hidden');
+    clearTable();
+  }
+
+  onAuthStateChanged(auth, user => {
+    currentUser = user || null;
+  });
+
+  window.switchTab = function (tab) {
+    if (tab === currentTab) return;
+    currentTab = tab;
+    document.getElementById('tab-pending').classList.toggle('active-tab', tab === 'pending');
+    document.getElementById('tab-approved').classList.toggle('active-tab', tab === 'approved');
+    loadTabData(tab);
+  }
+
+  function clearTable() {
+    document.getElementById('table-body').innerHTML = '';
+    document.querySelector('#account-table thead').innerHTML = '';
+  }
+
+  function loadTabData(tab) {
+    const tableBody = document.getElementById('table-body');
+    const tableHead = document.querySelector('#account-table thead');
+    const tabTitle = document.getElementById('tab-title');
+    tableBody.innerHTML = '';
+    tableHead.innerHTML = '';
+
+    if (tab === 'pending') {
+      tabTitle.textContent = 'Pending Accounts';
+      tableHead.innerHTML = `
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Type</th>
+          <th>Action</th>
+        </tr>`;
+      const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('pending'));
+      onValue(usersRef, snapshot => {
+        tableBody.innerHTML = '';
+        if (!snapshot.exists()) {
+          tableBody.innerHTML = `<tr><td colspan="4">No pending accounts found.</td></tr>`;
+          return;
+        }
+        snapshot.forEach(child => {
+          const data = child.val();
+          const uid = child.key;
+          tableBody.innerHTML += `
+            <tr>
+              <td>${data.username || ''}</td>
+              <td>${data.email || ''}</td>
+              <td>${data.type || ''}</td>
+              <td><button onclick="approveAccount('${uid}')">Approve</button></td>
+            </tr>`;
+        });
+      });
+
+    } else if (tab === 'approved') {
+      tabTitle.textContent = 'Approved Accounts';
+      tableHead.innerHTML = `
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Type</th>
+          <th>Payment Collected (₱)</th>
+        </tr>`;
+      const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
+      onValue(usersRef, snapshot => {
+        tableBody.innerHTML = '';
+        if (!snapshot.exists()) {
+          tableBody.innerHTML = `<tr><td colspan="4">No approved accounts found.</td></tr>`;
+          return;
+        }
+        snapshot.forEach(child => {
+          const data = child.val();
+          const payment = data.paymentCollected || 0;
+          tableBody.innerHTML += `
+            <tr>
+              <td>${data.username || ''}</td>
+              <td>${data.email || ''}</td>
+              <td>${data.type || ''}</td>
+              <td>${payment.toFixed(2)}</td>
+            </tr>`;
+        });
+      });
+    }
+  }
+
+  window.approveAccount = async function (uid) {
+    const payment = prompt('Enter payment amount collected (₱):');
+    if (payment === null) return;
+    const paymentValue = parseFloat(payment);
+    if (isNaN(paymentValue) || paymentValue < 0) {
+      alert('Invalid payment amount.');
+      return;
+    }
+
+    const updates = {
+      status: 'approved',
+      paymentCollected: paymentValue,
+      approvedBy: currentUser.email
+    };
+
+    await update(ref(db, 'users/' + uid), updates);
+    alert('Account approved successfully. Please pay the owner ₱50 for commission');
+    loadTabData(currentTab);
+    updateTotalEarnings();
+    loadApprovedTransactionCards();
+  }
+
+function updateTotalEarnings() {
+  const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
+  onValue(usersRef, snapshot => {
+    let gross = 0;
+    let net = 0;
+    if (snapshot.exists()) {
+      snapshot.forEach(child => {
+        const payment = child.val().paymentCollected || 0;
+        gross += payment;
+        net += Math.max(0, payment - 50); // Net = payment - ₱50 commission
+      });
+    }
+
+    // Update HTML display
+    document.getElementById('total-earnings-value').textContent = net.toFixed(2);
+
+    // Optional: Display breakdown if you have these elements
+    const grossEl = document.getElementById('total-gross');
+    const netEl = document.getElementById('total-net');
+    const lessEl = document.getElementById('total-less');
+
+    if (grossEl && netEl && lessEl) {
+      grossEl.textContent = `₱${gross.toFixed(2)}`;
+      netEl.textContent = `₱${net.toFixed(2)}`;
+      lessEl.textContent = `₱${(gross - net).toFixed(2)}`;
+    }
+  });
+}
+
+
+  function renderTransactionCards(accounts) {
+    const container = document.getElementById('transaction-history');
+    container.innerHTML = '';
+
+    if (accounts.length === 0) {
+      container.innerHTML = `<p style="color:#fff;">No accounts found.</p>`;
+      return;
+    }
+
+    accounts.forEach(account => {
+      const card = document.createElement('div');
+      card.className = 'transaction-card';
+      const dateText = account.date_registration
+        ? new Date(account.date_registration).toLocaleString()
+        : 'N/A';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="left-info">
+            <strong>${account.username || 'No Username'}</strong> - ${account.type || 'N/A'}
+          </div>
+          <span class="status">
+            ${account.status === 'approved' ? '<i class="bi bi-check-circle-fill"></i>' : ''} ${account.status}
+          </span>
+        </div>
+        <div class="details">
+          <p><strong>Email:</strong> ${account.email || 'N/A'}</p>
+          <p><strong>Date Registered:</strong> ${dateText}</p>
+          <p><strong>Payment Collected:</strong> ₱${(account.paymentCollected || 0).toFixed(2)}</p>
+          <p><strong>Approved By:</strong> ${account.username || 'N/A'}</p>
+        </div>`;
+      card.addEventListener('click', () => {
+        card.classList.toggle('expanded');
+      });
+      container.appendChild(card);
+    });
+  }
+
+  function loadApprovedTransactionCards() {
+    const usersRef = query(ref(db, 'users'), orderByChild('status'), equalTo('approved'));
+    onValue(usersRef, snapshot => {
+      if (!snapshot.exists()) {
+        renderTransactionCards([]);
+        return;
+      }
+      const approvedAccounts = [];
+      snapshot.forEach(child => {
+        approvedAccounts.push(child.val());
+      });
+      renderTransactionCards(approvedAccounts);
+    });
+  }
+</script>
+<script>
+  function openCommissionModal() {
+    document.getElementById("commissionModal").style.display = "block";
+  }
+
+  function closeCommissionModal() {
+    document.getElementById("commissionModal").style.display = "none";
+  }
+
+  // Optional: close modal when clicking outside
+  window.onclick = function(event) {
+    const modal = document.getElementById("commissionModal");
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+<script>
+  function copyText(elementId) {
+    const text = document.getElementById(elementId).textContent || '';
+    
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied: " + text);
+      }).catch(err => {
+        console.error("Copy failed", err);
+        alert("Failed to copy.");
+      });
+    } else {
+      // Fallback for older browsers
+      const tempInput = document.createElement("input");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      alert("Copied (fallback): " + text);
+    }
+  }
+</script>
+
+</body>
+</html>
